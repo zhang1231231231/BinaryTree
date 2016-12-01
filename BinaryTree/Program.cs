@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace BinaryTree
 {
@@ -19,10 +21,12 @@ namespace BinaryTree
             // 向节点"C"插入右孩子节点"F"
             Node<string> nodeC = rootNode.RChild;
             bTree.InsertRight(nodeC, "F");
+
             // 前序遍历
             Console.WriteLine("---------PreOrder---------");
             bTree.PreOrder(bTree.Root);
             Console.WriteLine("");
+
             // 中序遍历
             Console.WriteLine("---------MidOrder---------");
             bTree.MidOrder(bTree.Root);
@@ -30,7 +34,23 @@ namespace BinaryTree
             // 后序遍历
             Console.WriteLine("---------PostOrder---------");
             bTree.PostOrder(bTree.Root);
+            Console.WriteLine("");
+
+            // 前序无递归遍历
+            Console.WriteLine("---------PreOrderNoRecursion---------");
+            bTree.PreOrderNoRecursion(bTree.Root);
+            Console.WriteLine("");
+
+            // 中序无递归遍历
+            Console.WriteLine("---------MidOrderNoRecursion---------");
+            bTree.MidOrderNoRecursion(bTree.Root);
+            Console.WriteLine("");
+
+            // 前序无递归遍历
+            Console.WriteLine("---------PostOrderNoRecursion---------");
+            bTree.PostOrderNoRecursion(bTree.Root);
             Console.ReadLine();
+
         }
     }
 
@@ -49,6 +69,10 @@ namespace BinaryTree
             this.Item = item;
             this.LChild = lChild;
             this.RChild = rChild;
+        }
+
+        public Node()
+        {
         }
     }
 
@@ -155,6 +179,104 @@ namespace BinaryTree
                 PostOrder(node.LChild);
                 PostOrder(node.RChild);
                 Console.Write(node.Item + " ");
+            }
+        }
+        /// <summary>
+        /// 不用递归的方式前序遍历
+        /// </summary>
+        /// <param name="node"></param>
+        public void PreOrderNoRecursion(Node<T> node)
+        {
+            if (node == null)
+            {
+                return;
+            }
+
+            Stack<Node<T>> stack = new Stack<Node<T>>();
+            stack.Push(node);
+            Node<T> tempNode = null;
+            while (stack.Count > 0)
+            {
+                //遍历根节点
+                tempNode = stack.Pop();
+                Console.Write(tempNode.Item + " ");
+                //右子树入栈
+                if (tempNode.RChild != null)
+                {
+                    stack.Push(tempNode.RChild);
+                }
+                //左子树入栈
+                if (tempNode.LChild != null)
+                {
+                    stack.Push(tempNode.LChild);
+                }
+            }
+        }
+        /// <summary>
+        /// 不用递归的方式中序遍历
+        /// </summary>
+        /// <param name="node"></param>
+        public void MidOrderNoRecursion(Node<T> node)
+        {
+            if (node == null)
+            {
+                return;
+            }
+            Stack<Node<T>> stack = new Stack<Node<T>>();
+            Node<T> tempNode = new Node<T>();
+            tempNode = node;
+            while (tempNode != null || stack.Count > 0)
+            {
+                //依次将所有左子树节点压栈
+                while (tempNode != null)
+                {
+                    stack.Push(tempNode);
+                    tempNode = tempNode.LChild;
+                }
+                //出栈遍历节点
+                tempNode = stack.Pop();
+                Console.Write(tempNode.Item + " ");
+                //左子树遍历结束则跳转到又子树
+                tempNode = tempNode.RChild;
+            }
+        }
+        /// <summary>
+        /// 无递归后序遍历
+        /// </summary>
+        /// <param name="node"></param>
+        public void PostOrderNoRecursion(Node<T> node)
+        {
+            if (node ==null)
+            {
+                return;
+            }
+
+            //两个栈，一个存储，一个输出
+            Stack<Node<T>> stackIn = new Stack<Node<T>>();
+            Stack<Node<T>> stackOut = new Stack<Node<T>>();
+            Node<T> tempNode = null;
+            //根节点首先压栈
+            stackIn.Push(node);
+            //左->右->根
+            while (stackIn.Count > 0)
+            {
+                tempNode = stackIn.Pop();
+                stackOut.Push(tempNode);
+                if (tempNode.LChild != null)
+                {
+                    stackIn.Push(tempNode.LChild);
+                }
+                if (tempNode.RChild != null)
+                {
+                    stackIn.Push(tempNode.RChild);
+                }
+            }
+
+            while (stackOut.Count > 0)
+            {
+                //依次遍历各节点
+                Node<T> outNode = stackOut.Pop();
+                Console.Write(outNode.Item + " ");
             }
         }
     }
